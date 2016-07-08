@@ -6,11 +6,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Insert title here</title>
 </head>
-<body>
-	hello tangyinbo this is the test jsp
-	<hr/>
-	${testType}
-	<hr/>
-	${cityList }
+<body style="color:red;font-size: 50px;">
+	404
 </body>
 </html>

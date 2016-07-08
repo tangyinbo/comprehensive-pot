@@ -1,22 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
-	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xsi:schemaLocation="
-        http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/context
-        http://www.springframework.org/schema/context/spring-context.xsd
-        http://www.springframework.org/schema/mvc
-         http://www.springframework.org/schema/mvc/spring-mvc.xsd ">
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation=" 
+   http://www.springframework.org/schema/beans 
+   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd   
+   http://www.springframework.org/schema/context 
+   http://www.springframework.org/schema/context/spring-context-3.0.xsd   
+   http://www.springframework.org/schema/aop 
+   http://www.springframework.org/schema/aop/spring-aop-3.0.xsd   
+   http://www.springframework.org/schema/tx
+   http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+   http://www.springframework.org/schema/mvc 
+   http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+   http://www.springframework.org/schema/util 
+   http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+	<!-- 开启注解 自动注册基于注解风格的处理器需要的DefaultAnnotationHandlerMapping、AnnotationMethodHandlerAdapter 
+		支持 Spring3的ConversionService自动注册 支持 JSR-303验证框架的自动探测并注册（只需把JSR-303实现放置到classpath） 
+		自动注册相应的HttpMessageConverter（用于支持@RequestBody 和 @ResponseBody）（如XML输入输出转换器 
+		（只需将JAXP实现放置到classpath）、JSON 输入输出转换器（只需将Jackson 实现放置到classpath））等。 -->
+	<mvc:annotation-driven conversion-service="conversionService"/>
+
+	<!-- 开启注解式处理器支持的配置为：DefaultAnnotationHandlerMapping 和 AnnotationMethodHandlerAdapter。 -->
+
+	<!-- Spring3.1之前的注解HandlerMapping <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/> 
+		Spring3.1之前的注解HandlerAdapter <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"/> -->
+
+	<!-- Spring3.1开始的注解HandlerMapping <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" 
+		Spring3.1开始的注解HandlerAdapter <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter" -->
+
+
+	<!-- 注解默认扫描的包路径 -->
 	<context:component-scan base-package="com.mix.springmvc.web" />
-	<mvc:annotation-driven />
-	<!-- 处理 静态文件不能访问 -->
+
+	<!-- 处理 静态文件不能访问 当在web.xml 中DispatcherServlet使用<url-pattern>/</url-pattern> 
+		映射时，能映射静 态资源（当Spring Web MVC框架没有处理请求对应的控制器时（如一些静态资源），转交给默认的Servlet来响应静态 文件，否则报404 
+		找不到资源错误， -->
 	<mvc:default-servlet-handler />
+	<mvc:interceptors>
+		<bean class="com.mix.springmvc.interceptor.RequestTimeWatchInterceptor"/>
+	</mvc:interceptors>
+	<!-- 资源前缀和后缀配置 -->
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/"></property>
 		<property name="suffix" value=".jsp"></property>
 	</bean>
+	
+	<!-- 支持上传文件 -->  
+    <!-- <bean id="multipartResolver"  class="org.springframework.web.multipart.commons.CommonsMultipartResolver" /> -->  
+
+	<!-- 类型转换 -->
+	<!-- ①注册ConversionService -->
+	<bean id="conversionService"
+		class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+		<property name="converters">
+			<list>
+				<bean class="com.mix.springmvc.comvert.StringToPhoneNumberConverter" />
+			</list>
+		</property>
+	</bean>
+	
 </beans>
