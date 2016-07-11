@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd
+         http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd">
+    <import resource="spring-aop.xml"/>
+	<context:component-scan base-package="com.mix">
+		<context:exclude-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+	<aop:aspectj-autoproxy/>
+	<!-- 属性文件加密 -->
+	<bean class="com.mix.digist.EncryptPropertyPlaceholderConfigurer">
+		<property name="encryptPropNames">
+			<array>
+				<value>username</value>
+				<value>password</value>
+			</array>
+		</property>
+		<property name="locations">
+			<list>
+				<value>classpath:datasource.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- 数据源 -->
+	<bean id="druidDataSource" class="com.mix.basic.VPdDataSource">
+		<!--基本属性 url、user、password -->
+		<property name="url" value="${url}" />
+		<property name="username" value="${user_name}" />
+		<property name="password" value="${passwd}" />
+
+		<!--配置初始化大小、最小、最大 -->
+		<property name="initialSize" value="${initialSize}" />
+		<property name="minIdle" value="${minIdle}" />
+		<property name="maxActive" value="${maxActive}" />
+
+		<!--配置获取连接等待超时的时间 -->
+		<property name="maxWait" value="${maxWait}" />
+
+		<!--配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+		<property name="timeBetweenEvictionRunsMillis" value="${timeBetweenEvictionRunsMillis}" />
+
+		<!--配置一个连接在池中最小生存的时间，单位是毫秒 -->
+		<property name="minEvictableIdleTimeMillis" value="${minEvictableIdleTimeMillis}" />
+
+		<property name="validationQuery" value="${validationQuery}" />
+		<property name="testWhileIdle" value="${testWhileIdle}" />
+		<property name="testOnBorrow" value="${testOnBorrow}" />
+		<property name="testOnReturn" value="${testOnReturn}" />
+
+		<!--打开PSCache，并且指定每个连接上PSCache的大小 -->
+		<property name="poolPreparedStatements" value="${poolPreparedStatements}" />
+		<property name="maxPoolPreparedStatementPerConnectionSize"
+			value="${maxPoolPreparedStatementPerConnectionSize}" />
+
+		<!--配置监控统计拦截的filters -->
+		<property name="filters" value="${filters}" />
+
+		<property name="useOracleImplicitCache" value="${useOracleImplicitCache}" />
+	</bean>
+
+	<!-- Spring jdbcTemplate -->
+	<bean class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="druidDataSource"></property>
+	</bean>
+
+	<!-- 事物处理 -->
+	<bean id="baseTxAdvisor"
+		class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">
+		<property name="advice">
+			<bean
+				class="org.springframework.transaction.interceptor.TransactionInterceptor">
+				<property name="transactionManager">
+					<bean
+						class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+						<property name="dataSource" ref="druidDataSource"></property>
+					</bean>
+				</property>
+				<property name="transactionAttributes">
+					<props>
+						<prop key="update*">PROPAGATION_REQUIRED</prop> 
+						<prop key="add*">PROPAGATION_REQUIRED</prop>
+						<prop key="do*" >PROPAGATION_REQUIRED</prop>
+						<prop key="doNt*">PROPAGATION_REQUIRES_NEW</prop>
+						<prop key="get*">PROPAGATION_SUPPORTS</prop>
+						<prop key="query*">PROPAGATION_SUPPORTS</prop>
+						<prop key="search*">PROPAGATION_SUPPORTS</prop>
+					</props>
+				</property>
+			</bean>
+		</property>
+		<property name="patterns">
+			<list>
+				<value>.*Dao*\..*</value>
+			</list>
+		</property>
+	</bean>
+</beans>

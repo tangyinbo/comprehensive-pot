@@ -30,6 +30,7 @@ public class TestController {
 	
 	@RequestMapping("/test2")
 	public String test2(Model model){
+		int a = 1/0;
 		 return "index";
 	}
 	
