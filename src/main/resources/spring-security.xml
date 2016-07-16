@@ -13,13 +13,11 @@
 		  default-target-url表示登陆成功时，跳转到哪个页面
 	 -->
 	<http auto-config="true">
-		<intercept-url pattern="/login.jsp" access="hasRole('USER')" />
-		<intercept-url pattern="/test.jsp" access="hasRole('ADMIN')" />
-		<intercept-url pattern="/**" access="hasRole('USER')" />
 		<!-- <form-login login-page="/login.jsp"
 			authentication-failure-url="/login.jsp?error=true" 
 			default-target-url="/index.jsp" /> -->
 		<logout logout-url="/login.jsp" />
+		<custom-filter ref="appInterceptor" before="FILTER_SECURITY_INTERCEPTOR" />
 	</http>
 	<!-- 授权管理 -->
 	<authentication-manager alias="authenticationManager">
@@ -31,13 +29,27 @@
 		<b:property name="userDetailsService" ref="userDetailsService"></b:property>
 		<b:property name="passwordEncoder" ref="bcryptEncoder"></b:property>
 	</b:bean>
+	
 	<!-- 用户信息提供 -->
 	<b:bean id="userDetailsService" class="com.mix.springsecurity.authorization.SecUserDetailsService"></b:bean>
 	<!-- 加密算法 -->
 	<b:bean name="bcryptEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
 	</b:bean>
 
-	<b:bean></b:bean>
+	<b:bean id="appInterceptor" class="com.mix.springsecurity.authorization.SecSecurityInterceptor">
+		<b:property name="securityMetadataSource" ref="securityMetadataSource"/>
+		<b:property name="accessDecisionManager" ref="accessDecisionManager"/>
+		<b:property name="authenticationManager" ref="authenticationManager"/>
+	</b:bean>
+	
+	<!-- 资源角色关系初始化 -->
+	<b:bean id="securityMetadataSource" class="com.mix.springsecurity.authorization.SecFilterInvocationSecurityMetadataSource">
+		<b:constructor-arg name="secUserService" ref="secUserService"/>
+	</b:bean>
+	<b:bean id="accessDecisionManager" class="com.mix.springsecurity.authorization.SecAccessDecisionManager"/>
+	
+	<!--  -->
+	<b:bean id="secUserService" class="com.mix.springsecurity.service.impl.SecUserServiceImpl"></b:bean>
 	<!-- 配置临时用户权限 -->
 	<!-- <authentication-manager> <authentication-provider> <user-service> <user 
 		name="tyb" password="123456" authorities="ROLE_USER"/> <user name="admin" 

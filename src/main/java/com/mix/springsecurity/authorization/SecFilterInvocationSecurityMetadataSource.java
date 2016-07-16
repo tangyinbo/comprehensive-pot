@@ -34,14 +34,14 @@ public class SecFilterInvocationSecurityMetadataSource implements
 	 * 公共资源扩展接口
 	 */
 	private SecPublicResource secPublicResource;
-
-	@Autowired
+	
 	private SecUserService secUserService;
 
 	/**
 	 * 类初始化的时候初始化资源
 	 */
-	public SecFilterInvocationSecurityMetadataSource() {
+	public SecFilterInvocationSecurityMetadataSource(SecUserService secUserService) {
+		this.secUserService = secUserService;
 		// 初始化资源权限描述
 		relationMap = initAllResourcesRoleRel();
 
@@ -53,8 +53,7 @@ public class SecFilterInvocationSecurityMetadataSource implements
 	 */
 	private Map<String, Collection<ConfigAttribute>> initAllResourcesRoleRel() {
 		// 初始化所有的资源和权限的对应关系
-		List<Map<String, String>> resourceUrlMapping = secUserService
-				.getAllResourceUrlMapping();
+		List<Map<String, String>> resourceUrlMapping = secUserService.getAllResourceUrlMapping();
 		Map<String, Collection<ConfigAttribute>> relationMap = new HashMap<String, Collection<ConfigAttribute>>();
 		if (resourceUrlMapping != null && resourceUrlMapping.size() > 0) {
 			for (Map<String, String> rm : resourceUrlMapping) {

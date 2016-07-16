@@ -12,7 +12,6 @@ import com.mix.system.domain.Role;
 import com.mix.system.domain.SecRole;
 import com.mix.system.domain.User;
 
-@Service
 public class SecUserServiceImpl implements SecUserService{
 	@Autowired
 	private SecUserDao secUserDao;
