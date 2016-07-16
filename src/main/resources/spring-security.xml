@@ -1,0 +1,61 @@
+<b:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:b="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/security
+		http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<!-- 定义不需要权限的文件访问 -->
+	<http pattern="/login.jsp" security="none" />
+
+	<!-- 定义登录界面路径,登录首页路径,注销路径
+	      authentication-failure-url:登录失败跳转界面 
+		  default-target-url表示登陆成功时，跳转到哪个页面
+	 -->
+	<http auto-config="true">
+		<intercept-url pattern="/login.jsp" access="hasRole('USER')" />
+		<intercept-url pattern="/test.jsp" access="hasRole('ADMIN')" />
+		<intercept-url pattern="/**" access="hasRole('USER')" />
+		<!-- <form-login login-page="/login.jsp"
+			authentication-failure-url="/login.jsp?error=true" 
+			default-target-url="/index.jsp" /> -->
+		<logout logout-url="/login.jsp" />
+	</http>
+	<!-- 授权管理 -->
+	<authentication-manager alias="authenticationManager">
+		<authentication-provider ref="daoAuthenticationProvider "></authentication-provider>
+	</authentication-manager>
+	
+	<!-- 认证提供 -->
+	<b:bean id="daoAuthenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider">
+		<b:property name="userDetailsService" ref="userDetailsService"></b:property>
+		<b:property name="passwordEncoder" ref="bcryptEncoder"></b:property>
+	</b:bean>
+	<!-- 用户信息提供 -->
+	<b:bean id="userDetailsService" class="com.mix.springsecurity.authorization.SecUserDetailsService"></b:bean>
+	<!-- 加密算法 -->
+	<b:bean name="bcryptEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
+	</b:bean>
+
+	<b:bean></b:bean>
+	<!-- 配置临时用户权限 -->
+	<!-- <authentication-manager> <authentication-provider> <user-service> <user 
+		name="tyb" password="123456" authorities="ROLE_USER"/> <user name="admin" 
+		password="123456" authorities="ROLE_USER,ROLE_ADMIN"/> </user-service> </authentication-provider> 
+		</authentication-manager> -->
+	<!-- 固定格式的表结构权限控制基本 -->
+	<!-- 	<authentication-manager>
+			<authentication-provider>
+				<jdbc-user-service data-source-ref="druidDataSource"
+					users-by-username-query="select username,password,status as enabled
+										from t_user where username=?"
+					authorities-by-username-query=" select u.username, r.name as authority
+											        from t_user u
+											        join t_user_role ur
+											          on u.id = ur.user_id
+											        join t_role r
+											          on r.id = ur.role_id
+											       where u.username = ?" />
+			</authentication-provider>
+		</authentication-manager> -->
+</b:beans>

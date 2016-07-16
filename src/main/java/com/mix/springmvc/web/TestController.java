@@ -25,12 +25,11 @@ public class TestController {
 	@RequestMapping(value="/test1")
 	public String helloWorld(Model model){
 		model.addAttribute("name", "tangyinbo");
-		return "test2";
+		return "test";
 	}
 	
 	@RequestMapping("/test2")
 	public String test2(Model model){
-		int a = 1/0;
 		 return "index";
 	}
 	

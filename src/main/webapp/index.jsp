@@ -9,10 +9,6 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<form method="post" action="login">
-		account:<input type="text" name="name"> <br/>
-		password:<input type="text" name="password"/><br/>
-		<input type="submit" value="submit"> 
-	</form>
+	<div style="font-size: 50px;color: red">welcome to my world</div>
 </body>
 </html>

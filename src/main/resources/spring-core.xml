@@ -11,6 +11,7 @@
          http://www.springframework.org/schema/tx
         http://www.springframework.org/schema/tx/spring-tx.xsd">
     <import resource="spring-aop.xml"/>
+    <import resource="spring-security.xml"/>
 	<context:component-scan base-package="com.mix">
 		<context:exclude-filter type="annotation"
 			expression="org.springframework.stereotype.Controller" />
@@ -32,7 +33,7 @@
 	</bean>
 
 	<!-- 数据源 -->
-	<bean id="druidDataSource" class="com.mix.basic.VPdDataSource">
+	<bean id="basicDataSource" class="com.mix.basic.VPdDataSource">
 		<!--基本属性 url、user、password -->
 		<property name="url" value="${url}" />
 		<property name="username" value="${user_name}" />
@@ -70,7 +71,7 @@
 
 	<!-- Spring jdbcTemplate -->
 	<bean class="org.springframework.jdbc.core.JdbcTemplate">
-		<property name="dataSource" ref="druidDataSource"></property>
+		<property name="dataSource" ref="basicDataSource"></property>
 	</bean>
 
 	<!-- 事物处理 -->
@@ -82,7 +83,7 @@
 				<property name="transactionManager">
 					<bean
 						class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-						<property name="dataSource" ref="druidDataSource"></property>
+						<property name="dataSource" ref="basicDataSource"></property>
 					</bean>
 				</property>
 				<property name="transactionAttributes">
