@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
@@ -124,13 +123,19 @@ public class SecFilterInvocationSecurityMetadataSource implements
 		if (requestUrl.indexOf("?") != -1) {
 			requestUrl = requestUrl.substring(0, requestUrl.indexOf("?"));
 		}
-		if (relationMap.containsKey(requestUrl)) {
-			return relationMap.get(requestUrl);
-		} else {
-			Collection<ConfigAttribute> configAttributes = new ArrayList<ConfigAttribute>();
-			configAttributes.add(new SecurityConfig("ROLE_NO_USER"));
-			return configAttributes;
+		Iterator<String> it = relationMap.keySet().iterator();
+		while (it.hasNext()) {
+			String url = it.next();
+			if (requestUrl.indexOf("?") != -1) {
+				requestUrl = requestUrl.substring(0, requestUrl.indexOf("?"));
+			}
+			if (urlMatcher.match(url, requestUrl)) {
+				return relationMap.get(url);
+			}
 		}
+		Collection<ConfigAttribute> configAttributes = new ArrayList<ConfigAttribute>();
+		configAttributes.add(new SecurityConfig("ROLE_NO_USER"));
+		return configAttributes;
 	}
 
 	@Override
@@ -140,7 +145,7 @@ public class SecFilterInvocationSecurityMetadataSource implements
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return false;
+		return true;
 	}
 
 }

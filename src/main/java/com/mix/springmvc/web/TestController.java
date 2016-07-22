@@ -3,12 +3,14 @@ package com.mix.springmvc.web;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.mix.springmvc.domain.PhoneNumberModel;
@@ -43,11 +45,14 @@ public class TestController {
 		return "test";
 	}
 	
-	@RequestMapping(value="/login",method=RequestMethod.POST)
-	public String login(User user,Model model,TUser tuser){
+	@RequestMapping(value="/login")
+	public String login(User user,Model model,TUser tuser,HttpServletRequest request){
 		model.addAttribute("testType", "login:"+user.getName());
+		CsrfToken ts = (CsrfToken) request.getAttribute("_csrf");
+		model.addAttribute("tt", "attributeValue==============");
+		ts = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
 		System.out.println("------------------------------------");
-		return "test";
+		return "login";
 	}
 	
 	@RequestMapping(value="/requestParameter")

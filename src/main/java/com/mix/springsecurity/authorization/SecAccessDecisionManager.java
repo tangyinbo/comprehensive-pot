@@ -37,7 +37,6 @@ public class SecAccessDecisionManager implements AccessDecisionManager{
 	            }  
 			}
 		}
-		
 		//没有权限  
        throw new AccessDeniedException("没有权限访问！");  
 	}

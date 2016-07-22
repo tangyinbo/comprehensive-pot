@@ -58,7 +58,7 @@ public class SecUserDaoImpl extends BaseDao implements SecUserDao{
 			public Map<String, String> mapRow(ResultSet rs, int rowNum)
 					throws SQLException {
 				Map<String,String> urlRoleMap = new HashMap<String,String>();
-				urlRoleMap.put("RES_URL", "ROLE_NAME");
+				urlRoleMap.put(rs.getString("RES_URL"), rs.getString("ROLE_NAME"));
 				return urlRoleMap;
 			}});
 		return resourceRoleMapping;

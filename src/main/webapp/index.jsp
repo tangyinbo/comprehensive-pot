@@ -9,6 +9,6 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<div style="font-size: 50px;color: red">welcome to my world</div>
+	<div style="font-size: 50px;color: red">welcome to my world index.jsp</div>
 </body>
 </html>

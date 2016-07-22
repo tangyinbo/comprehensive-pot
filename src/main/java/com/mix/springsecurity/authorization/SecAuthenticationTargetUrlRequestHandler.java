@@ -1,0 +1,7 @@
+package com.mix.springsecurity.authorization;
+
+import org.springframework.security.web.authentication.AbstractAuthenticationTargetUrlRequestHandler;
+
+public class SecAuthenticationTargetUrlRequestHandler extends AbstractAuthenticationTargetUrlRequestHandler{
+
+}
